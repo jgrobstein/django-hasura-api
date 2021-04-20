@@ -1,0 +1,42 @@
+version: "3.9"
+   
+services:
+    db:
+        image: postgres
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - "5432:5432"
+        restart: always
+    gql:
+        image: hasura/graphql-engine:latest
+        environment:
+            - HASURA_GRAPHQL_DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+            - HASURA_GRAPHQL_ENABLE_CONSOLE=true
+            - HASURA_GRAPHQL_ADMIN_SECRET=myadminsecretkey
+            - HASURA_GRAPHQL_ENABLE_TELEMETRY=false
+        ports:
+            - "8080:8080"
+        depends_on:
+            - db
+        restart: always
+    app:
+        build: 
+            context: .docker-files
+            dockerfile: Django
+        command: python manage.py migrate
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        restart: always
+
+volumes:
+    postgres:

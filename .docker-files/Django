@@ -1,0 +1,4 @@
+FROM python:latest
+ENV PYTHONUNBUFFERED=1
+WORKDIR /app
+RUN pip install --upgrade pip django django-allauth django-graphql-jwt psycopg2-binary
