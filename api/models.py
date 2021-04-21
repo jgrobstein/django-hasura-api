@@ -1,32 +1,31 @@
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 # Create your models here.
-class Role(models.Model):
-    is_moderator = 1
-    is_instructor = 2
-    is_scholar = 3
-    active_roles=(
-        (is_moderator, "Moderator"),
-        (is_instructor, "Instructor"),
-        (is_scholar, "Scholar"),
-    )
-    id = models.PositiveIntegerField(choices=active_roles, primary_key=True)
 
-class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.ManyToManyField(Role)
-    courses= models.JSONField(null=True, blank=True)
 
-    
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        profile.objects.create(user=instance)
+class User(AbstractUser):
+    email = models.EmailField('email address', unique=True)
+    role = models.CharField(choices=(('scholar', 'Scholar'), ('instructor', 'Instructor'), ('moderator', 'Moderator')), max_length=12)
+    credit = models.PositiveIntegerField(default=0)
+    courses = models.JSONField(blank=True, null=True)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    def __str__(self):
+        return self.email
+
+
+def add_user_to_group(sender, instance, created, **kwargs):
+    """Post-create user signal that adds the user to everyone group."""
+
+    try:
+        if created:
+            instance.groups.add(Group.objects.get(pk=settings.PUBLIC_GROUP_ID))
+    except Group.DoesNotExist:
+        pass
+
+post_save.connect(add_user_to_group, sender=User)

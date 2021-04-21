@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
+from api.views import index
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
+    path('auth/', include('allauth.urls')),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=False))),
 ]

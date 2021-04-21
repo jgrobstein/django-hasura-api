@@ -4,7 +4,8 @@ Backend project with user authentication and JWT provided by allauth and graphen
 
 ## Running application
 ```
-docker-compose up --build
+docker-compose up --build -d
+docker exec -d app python manage.py makemigrations
 docker exec -d app python manage.py migrate
 ```
 
