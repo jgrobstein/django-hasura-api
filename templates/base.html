@@ -27,12 +27,20 @@ Copyright 2021 I Services, Inc. All rights reserved.
 </head>
 <body>
     {% block body %}
-    <header class="uk-navbar-container" uk-navbar>
+    <header class="uk-navbar-container" uk-navbar="mode: click">
         <div id="menu" class="uk-navbar-right">
           <ul class="uk-navbar-nav">
             {% if user.is_authenticated %}
-            <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+            <li>
+                <a href="#" uk-icon="icon: user;"></a>
+                <div class="uk-navbar-dropdown">
+                    <h5>@{{ request.user.username }}</h5>
+                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                        <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+                        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+                    </ul>
+                </div>
+            </li>
             {% else %}
             <li><a href="{% url 'account_login' %}">Sign In</a></li>
             <li><a href="{% url 'account_signup' %}">Sign Up</a></li>

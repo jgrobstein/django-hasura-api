@@ -1,0 +1,426 @@
+{
+  "version": 2,
+  "tables": [
+    {
+      "table": {
+        "schema": "public",
+        "name": "account_emailaddress"
+      },
+      "object_relationships": [
+        {
+          "name": "api_user",
+          "using": {
+            "foreign_key_constraint_on": "user_id"
+          }
+        }
+      ],
+      "insert_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "check": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "columns": [
+              "email"
+            ],
+            "backend_only": true
+          }
+        }
+      ],
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "email",
+              "id",
+              "primary",
+              "verified"
+            ],
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "allow_aggregations": true
+          }
+        }
+      ],
+      "delete_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "api_user"
+      },
+      "array_relationships": [
+        {
+          "name": "account_emailaddresses",
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "user_id",
+              "table": {
+                "schema": "public",
+                "name": "account_emailaddress"
+              }
+            }
+          }
+        },
+        {
+          "name": "api_user_groups",
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "user_id",
+              "table": {
+                "schema": "public",
+                "name": "api_user_groups"
+              }
+            }
+          }
+        },
+        {
+          "name": "refresh_token_refreshtokens",
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "user_id",
+              "table": {
+                "schema": "public",
+                "name": "refresh_token_refreshtoken"
+              }
+            }
+          }
+        },
+        {
+          "name": "socialaccount_socialaccounts",
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "user_id",
+              "table": {
+                "schema": "public",
+                "name": "socialaccount_socialaccount"
+              }
+            }
+          }
+        }
+      ],
+      "insert_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "check": {
+              "id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "columns": [
+              "courses",
+              "credit",
+              "email",
+              "first_name",
+              "last_name",
+              "password",
+              "role",
+              "username"
+            ],
+            "backend_only": true
+          }
+        }
+      ],
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "courses",
+              "credit",
+              "date_joined",
+              "email",
+              "first_name",
+              "id",
+              "is_active",
+              "is_staff",
+              "is_superuser",
+              "last_login",
+              "last_name",
+              "role",
+              "username"
+            ],
+            "filter": {
+              "is_active": {
+                "_eq": true
+              }
+            }
+          }
+        }
+      ],
+      "update_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "courses",
+              "credit",
+              "email",
+              "first_name",
+              "last_name",
+              "password",
+              "role",
+              "username"
+            ],
+            "filter": {
+              "id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "check": {}
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "api_user_groups"
+      },
+      "object_relationships": [
+        {
+          "name": "api_user",
+          "using": {
+            "foreign_key_constraint_on": "user_id"
+          }
+        },
+        {
+          "name": "auth_group",
+          "using": {
+            "foreign_key_constraint_on": "group_id"
+          }
+        }
+      ],
+      "insert_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "check": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "columns": [
+              "group_id",
+              "user_id"
+            ],
+            "backend_only": true
+          }
+        }
+      ],
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "group_id",
+              "id"
+            ],
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            }
+          }
+        }
+      ],
+      "delete_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "auth_group"
+      },
+      "array_relationships": [
+        {
+          "name": "api_user_groups",
+          "using": {
+            "foreign_key_constraint_on": {
+              "column": "group_id",
+              "table": {
+                "schema": "public",
+                "name": "api_user_groups"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "django_site"
+      },
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "domain",
+              "name"
+            ],
+            "filter": {}
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "refresh_token_refreshtoken"
+      },
+      "object_relationships": [
+        {
+          "name": "api_user",
+          "using": {
+            "foreign_key_constraint_on": "user_id"
+          }
+        }
+      ],
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "token"
+            ],
+            "filter": {
+              "_and": [
+                {
+                  "user_id": {
+                    "_eq": "X-Hasura-User-Id"
+                  }
+                },
+                {
+                  "revoked": {
+                    "_is_null": true
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "table": {
+        "schema": "public",
+        "name": "socialaccount_socialaccount"
+      },
+      "object_relationships": [
+        {
+          "name": "api_user",
+          "using": {
+            "foreign_key_constraint_on": "user_id"
+          }
+        }
+      ],
+      "insert_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "check": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "columns": [
+              "extra_data",
+              "provider",
+              "uid",
+              "user_id"
+            ],
+            "backend_only": true
+          }
+        }
+      ],
+      "select_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "date_joined",
+              "extra_data",
+              "last_login",
+              "provider",
+              "uid"
+            ],
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            }
+          }
+        }
+      ],
+      "update_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "columns": [
+              "extra_data"
+            ],
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            },
+            "check": null
+          }
+        }
+      ],
+      "delete_permissions": [
+        {
+          "role": "www",
+          "permission": {
+            "filter": {
+              "user_id": {
+                "_eq": "X-Hasura-User-Id"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "remote_schemas": [
+    {
+      "name": "graphene-auth",
+      "definition": {
+        "url": "http://host.docker.internal:8000/graphql/",
+        "timeout_seconds": 60,
+        "forward_client_headers": true
+      }
+    }
+  ]
+}

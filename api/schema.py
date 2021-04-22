@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
-from api.models import Profile
 from graphql_jwt.shortcuts import create_refresh_token, get_token
 import graphene
 import graphql_jwt
@@ -17,14 +16,9 @@ class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
 
-class UserProfile(DjangoObjectType):
-    class Meta:
-        model = Profile
-
 # CreateUser
 class CreateUser(graphene.Mutation):
     user = graphene.Field(UserType)
-    profile = graphene.Field(UserProfile)
     token = graphene.String()
     refresh_token = graphene.String()
     
@@ -40,12 +34,11 @@ class CreateUser(graphene.Mutation):
         )
         user.set_password(password)
         user.save()
-
-        profile_obj = Profile.objects.get(user=user.id)        
+    
         token = get_token(user)
         refresh_token = create_refresh_token(user)
         
-        return CreateUser(user=user, profile=profile_obj, token=token, refresh_token=refresh_token)
+        return CreateUser(user=user, token=token, refresh_token=refresh_token)
     
 # Finalize creating mutation for schema
 class Mutation(graphene.ObjectType):
@@ -64,13 +57,3 @@ class Query(graphene.ObjectType):
         if user.is_anonymous:
             raise Exception('Authentication Failure: Your must be signed in')
         return user
-    
-    def resolve_users(self, info):
-        user = info.context.user
-        print(user)
-        # Check to ensure user is a 'manager' to see all users
-        if user.is_anonymous:
-            raise Exception('Authentication Failure: Your must be signed in')
-        if user.profile.role != 1:
-            raise Exception('Authentication Failure: Must be Moderator')
-        return get_user_model().objects.all()
