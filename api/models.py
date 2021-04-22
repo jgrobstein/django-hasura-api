@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.db.models.signals import post_save
 
 # Create your models here.
@@ -24,7 +24,10 @@ def add_user_to_group(sender, instance, created, **kwargs):
 
     try:
         if created:
-            instance.groups.add(Group.objects.get(pk=settings.PUBLIC_GROUP_ID))
+            if instance.role is 'instructor':
+                instance.groups.add(Group.objects.get(pk=3))
+            else:
+                instance.groups.add(Group.objects.get(pk=4))
     except Group.DoesNotExist:
         pass
 
